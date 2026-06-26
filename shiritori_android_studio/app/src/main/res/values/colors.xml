@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Cosmic nebula palette — matches desktop versions -->
+    <color name="bg">#07050F</color>
+    <color name="card">#0D0818</color>
+    <color name="card2">#130E24</color>
+    <color name="border">#2D1B54</color>
+    <color name="border_a">#6D28D9</color>
+    <color name="accent">#A855F7</color>
+    <color name="glow">#C084FC</color>
+    <color name="clr_red">#F472B6</color>
+    <color name="clr_red_b">#EC4899</color>
+    <color name="clr_green">#34D399</color>
+    <color name="clr_orange">#FB923C</color>
+    <color name="dim">#5B4D7A</color>
+    <color name="text_primary">#EDE9FE</color>
+    <color name="purple">#AB62FC</color>
+    <color name="btn_fill">#4C1D95</color>
+</resources>

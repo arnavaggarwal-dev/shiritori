@@ -1,0 +1,42 @@
+com.shiritori.app-coordinatorlayout-1.1.0-0 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\021fadc29fe65ff2bbcad78f34514fec\transformed\coordinatorlayout-1.1.0\res
+com.shiritori.app-lifecycle-livedata-core-2.6.2-1 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\05c3390fe3222ac7b42a7115f95fcea0\transformed\lifecycle-livedata-core-2.6.2\res
+com.shiritori.app-startup-runtime-1.1.1-2 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\11dc5d42754ee7fbf3ac500b6280eb48\transformed\startup-runtime-1.1.1\res
+com.shiritori.app-cardview-1.0.0-3 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\192872f691cff118344706cfb0016f0a\transformed\cardview-1.0.0\res
+com.shiritori.app-profileinstaller-1.3.1-4 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\1f35a1bf22b88a8e648eb141a0503d99\transformed\profileinstaller-1.3.1\res
+com.shiritori.app-lifecycle-viewmodel-ktx-2.6.2-5 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\2b21dc26812b434f9423b9cfed33db8a\transformed\lifecycle-viewmodel-ktx-2.6.2\res
+com.shiritori.app-tracing-1.2.0-6 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\2d29a2c590b6990d8c5046650489f21d\transformed\tracing-1.2.0\res
+com.shiritori.app-fragment-1.8.5-7 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\2d5c6124bae504c0ebb55d140fcb212e\transformed\fragment-1.8.5\res
+com.shiritori.app-appcompat-resources-1.7.0-8 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\40bcc3903fa6c8afca7ed1b7c0fcfea4\transformed\appcompat-resources-1.7.0\res
+com.shiritori.app-lifecycle-livedata-core-ktx-2.6.2-9 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\4575b359df7b9444998848b035842414\transformed\lifecycle-livedata-core-ktx-2.6.2\res
+com.shiritori.app-emoji2-1.3.0-10 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\45c7404b47baad87c9a7e58d51a0545a\transformed\emoji2-1.3.0\res
+com.shiritori.app-lifecycle-viewmodel-savedstate-2.6.2-11 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\462324d5a275ae9b1078e67acf101d52\transformed\lifecycle-viewmodel-savedstate-2.6.2\res
+com.shiritori.app-core-runtime-2.2.0-12 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\58ef8f533e5628dc919bed87de9d3f5e\transformed\core-runtime-2.2.0\res
+com.shiritori.app-activity-ktx-1.8.1-13 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\5a592084e7b3b94af49c66c0761e01cc\transformed\activity-ktx-1.8.1\res
+com.shiritori.app-savedstate-1.2.1-14 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\6ce64d88ad4cf07144d7f3ced972529d\transformed\savedstate-1.2.1\res
+com.shiritori.app-core-1.15.0-15 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\76e50bcff7fc071560b67d0fb22d283a\transformed\core-1.15.0\res
+com.shiritori.app-fragment-ktx-1.8.5-16 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\7bac4628c4133ea171eb3087558756a4\transformed\fragment-ktx-1.8.5\res
+com.shiritori.app-drawerlayout-1.1.1-17 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\7cd618f60af317d2114b656eca019b89\transformed\drawerlayout-1.1.1\res
+com.shiritori.app-lifecycle-viewmodel-2.6.2-18 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\80ac12a46c44cd032e0ca85d86ec560e\transformed\lifecycle-viewmodel-2.6.2\res
+com.shiritori.app-activity-1.8.1-19 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\89fa818b5fd0bf471e891eaf72d5ff84\transformed\activity-1.8.1\res
+com.shiritori.app-lifecycle-runtime-2.6.2-20 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\9137775307f010088145aac22d91b022\transformed\lifecycle-runtime-2.6.2\res
+com.shiritori.app-lifecycle-process-2.6.2-21 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\a0bb5695216be32029f2d22c61a4ccf3\transformed\lifecycle-process-2.6.2\res
+com.shiritori.app-recyclerview-1.1.0-22 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\a6726bf1c43502d595eed6281da76117\transformed\recyclerview-1.1.0\res
+com.shiritori.app-viewpager2-1.0.0-23 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\ba9779226e228e51b0882c0b8dc07209\transformed\viewpager2-1.0.0\res
+com.shiritori.app-appcompat-1.7.0-24 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\c1d7cee2bd225297985dff1e932ea42f\transformed\appcompat-1.7.0\res
+com.shiritori.app-material-1.12.0-25 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\c883b89ba2228359ffe27a12c31f9cd2\transformed\material-1.12.0\res
+com.shiritori.app-emoji2-views-helper-1.3.0-26 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\cadc557d8bd093c134a1a9b783f27f7a\transformed\emoji2-views-helper-1.3.0\res
+com.shiritori.app-core-ktx-1.15.0-27 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\d47075359d6c9f876c8f9cfc319b9d13\transformed\core-ktx-1.15.0\res
+com.shiritori.app-lifecycle-runtime-ktx-2.6.2-28 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\e7771610afa0e0b6a4d6f8cffe06b03e\transformed\lifecycle-runtime-ktx-2.6.2\res
+com.shiritori.app-annotation-experimental-1.4.1-29 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\f3f61d1ca969782a7b88ee3b4ad45930\transformed\annotation-experimental-1.4.1\res
+com.shiritori.app-transition-1.5.0-30 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\f77be924d0226edb83ace07bde430023\transformed\transition-1.5.0\res
+com.shiritori.app-lifecycle-livedata-2.6.2-31 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\fdef0c5320bacc00f9e55449394fb8f7\transformed\lifecycle-livedata-2.6.2\res
+com.shiritori.app-savedstate-ktx-1.2.1-32 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\ff625301378fc00e0875daedf3605ab4\transformed\savedstate-ktx-1.2.1\res
+com.shiritori.app-constraintlayout-2.0.1-33 C:\Users\ARNAVAGGARWAL\.gradle\caches\8.13\transforms\ffd6f5286c1e96de3aa3a795ac56ec2a\transformed\constraintlayout-2.0.1\res
+com.shiritori.app-pngs-34 C:\Users\ARNAVAGGARWAL\Downloads\notebooks\y2 games\y2 shiritori\shiritori_android_studio\app\build\generated\res\pngs\debug
+com.shiritori.app-resValues-35 C:\Users\ARNAVAGGARWAL\Downloads\notebooks\y2 games\y2 shiritori\shiritori_android_studio\app\build\generated\res\resValues\debug
+com.shiritori.app-updated_navigation_xml-36 C:\Users\ARNAVAGGARWAL\Downloads\notebooks\y2 games\y2 shiritori\shiritori_android_studio\app\build\generated\updated_navigation_xml\debug
+com.shiritori.app-packageDebugResources-37 C:\Users\ARNAVAGGARWAL\Downloads\notebooks\y2 games\y2 shiritori\shiritori_android_studio\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.shiritori.app-packageDebugResources-38 C:\Users\ARNAVAGGARWAL\Downloads\notebooks\y2 games\y2 shiritori\shiritori_android_studio\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.shiritori.app-debug-39 C:\Users\ARNAVAGGARWAL\Downloads\notebooks\y2 games\y2 shiritori\shiritori_android_studio\app\build\intermediates\merged_res\debug\mergeDebugResources
+com.shiritori.app-debug-40 C:\Users\ARNAVAGGARWAL\Downloads\notebooks\y2 games\y2 shiritori\shiritori_android_studio\app\src\debug\res
+com.shiritori.app-main-41 C:\Users\ARNAVAGGARWAL\Downloads\notebooks\y2 games\y2 shiritori\shiritori_android_studio\app\src\main\res

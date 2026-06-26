@@ -1,0 +1,21 @@
+R_DEF: Internal format may change without notice
+local
+color accent
+color bg
+color border
+color border_a
+color btn_fill
+color card
+color card2
+color clr_green
+color clr_orange
+color clr_red
+color clr_red_b
+color dim
+color glow
+color purple
+color text_primary
+id container
+layout activity_main
+string app_name
+style Theme.Shiritori
