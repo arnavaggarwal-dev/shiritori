@@ -1,0 +1,114 @@
+name: Compile Shiritori App
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            artifact_name: mac
+          - os: ubuntu-latest
+            artifact_name: linux
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install system deps (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: sudo apt-get install -y python3-tk
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller customtkinter
+
+    - name: Build with PyInstaller (Mac)
+      if: matrix.os == 'macos-latest'
+      run: |
+        pyinstaller --onefile --windowed \
+          --collect-all customtkinter \
+          --add-data "shiritori net/words_dictionary.json:." \
+          --add-data "shiritori net/favicon.ico:." \
+          --icon "shiritori net/favicon.ico" \
+          "shiritori net/shiritori_net.py"
+
+    - name: Create DMG (Mac)
+      if: matrix.os == 'macos-latest'
+      run: |
+        mkdir -p dist/dmg_staging
+        cp dist/shiritori_net dist/dmg_staging/shiritori_net
+        hdiutil create \
+          -volname "Shiritori" \
+          -srcfolder dist/dmg_staging \
+          -ov -format UDZO \
+          dist/shiritori_net.dmg
+
+    - name: Build with PyInstaller (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        pyinstaller --onefile --windowed \
+          --collect-all customtkinter \
+          --add-data "shiritori net/words_dictionary.json:." \
+          --add-data "shiritori net/favicon.ico:." \
+          "shiritori net/shiritori_net.py"
+
+    - name: Upload compiled binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.artifact_name }}
+        path: |
+          dist/shiritori_net
+          dist/shiritori_net.dmg
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Download Mac artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: mac
+        path: release/
+
+    - name: Download Linux artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: linux
+        path: release/
+
+    - name: Delete existing release and tag
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release delete latest --yes || true
+        git push origin :refs/tags/latest || true
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: latest
+        name: Latest Build
+        body: Auto-built from latest commit on main.
+        files: |
+          release/shiritori_net
+          release/shiritori_net.dmg
+          shiritori bot/dist/shiritori_bot.exe
+          shiritori_android_studio/app/build/outputs/apk/debug/app-debug.apk
