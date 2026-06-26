@@ -38,21 +38,17 @@ jobs:
     - name: Build with PyInstaller (Mac)
       if: matrix.os == 'macos-latest'
       run: |
-        pyinstaller --onefile --windowed \
+        pyinstaller --onedir --windowed \
           --collect-all customtkinter \
           --add-data "shiritori net/words_dictionary.json:." \
-          --add-data "shiritori net/favicon.ico:." \
-          --icon "shiritori net/favicon.ico" \
           "shiritori net/shiritori_net.py"
 
     - name: Create DMG (Mac)
       if: matrix.os == 'macos-latest'
       run: |
-        mkdir -p dist/dmg_staging
-        cp dist/shiritori_net dist/dmg_staging/shiritori_net
         hdiutil create \
           -volname "Shiritori" \
-          -srcfolder dist/dmg_staging \
+          -srcfolder dist/shiritori_net.app \
           -ov -format UDZO \
           dist/shiritori_net.dmg
 
@@ -62,7 +58,6 @@ jobs:
         pyinstaller --onefile --windowed \
           --collect-all customtkinter \
           --add-data "shiritori net/words_dictionary.json:." \
-          --add-data "shiritori net/favicon.ico:." \
           "shiritori net/shiritori_net.py"
 
     - name: Upload compiled binary
