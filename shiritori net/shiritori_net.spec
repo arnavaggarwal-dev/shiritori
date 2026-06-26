@@ -1,13 +1,15 @@
 # -*- mode: python ; coding: utf-8 -*-
 import sys
+import importlib.util
 
 _icon = ['favicon.ico'] if sys.platform == 'win32' else []
+_ctk_path = importlib.util.find_spec('customtkinter').submodule_search_locations[0]
 
 a = Analysis(
-    ['shiritori_bot.py'],
+    ['shiritori_net.py'],
     pathex=[],
     binaries=[],
-    datas=[('words_dictionary.json', '.'), ('C:\\Users\\ARNAVAGGARWAL\\AppData\\Roaming\\Python\\Python313\\site-packages\\customtkinter', 'customtkinter')],
+    datas=[('words_dictionary.json', '.'), (_ctk_path, 'customtkinter')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -24,7 +26,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='shiritori_bot',
+    name='shiritori_net',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
