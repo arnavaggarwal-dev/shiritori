@@ -6,16 +6,40 @@ on:
   workflow_dispatch:
 
 jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Delete existing release and tag
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release delete latest --yes || true
+        git push origin :refs/tags/latest || true
+
+    - name: Create release with pre-built assets
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release create latest \
+          --title "Latest Build" \
+          --notes "Auto-built from latest commit on main." \
+          "shiritori bot/dist/shiritori_bot.exe" \
+          "shiritori_android_studio/app/build/outputs/apk/debug/app-debug.apk"
+
   build:
     name: Build for ${{ matrix.os }}
+    needs: create-release
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         include:
           - os: macos-latest
-            artifact_name: mac
           - os: ubuntu-latest
-            artifact_name: linux
 
     steps:
     - name: Checkout repository
@@ -52,6 +76,12 @@ jobs:
           -ov -format UDZO \
           dist/shiritori_net.dmg
 
+    - name: Upload DMG to release (Mac)
+      if: matrix.os == 'macos-latest'
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: gh release upload latest dist/shiritori_net.dmg
+
     - name: Build with PyInstaller (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: |
@@ -60,50 +90,8 @@ jobs:
           --add-data "shiritori net/words_dictionary.json:." \
           "shiritori net/shiritori_net.py"
 
-    - name: Upload compiled binary
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ matrix.artifact_name }}
-        path: |
-          dist/shiritori_net
-          dist/shiritori_net.dmg
-
-  release:
-    name: Create Release
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Download Mac artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: mac
-        path: release/
-
-    - name: Download Linux artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: linux
-        path: release/
-
-    - name: Delete existing release and tag
+    - name: Upload binary to release (Linux)
+      if: matrix.os == 'ubuntu-latest'
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        gh release delete latest --yes || true
-        git push origin :refs/tags/latest || true
-
-    - name: Create Release
-      uses: softprops/action-gh-release@v2
-      with:
-        tag_name: latest
-        name: Latest Build
-        body: Auto-built from latest commit on main.
-        files: |
-          release/shiritori_net
-          release/shiritori_net.dmg
-          shiritori bot/dist/shiritori_bot.exe
-          shiritori_android_studio/app/build/outputs/apk/debug/app-debug.apk
+      run: gh release upload latest dist/shiritori_net
