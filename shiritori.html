@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✦ SHIRITORI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #07050F;
+    --card:    #0D0818;
+    --card2:   #130E24;
+    --border:  #2D1B54;
+    --bordeA:  #6D28D9;
+    --accent:  #A855F7;
+    --glow:    #C084FC;
+    --red:     #F472B6;
+    --redB:    #EC4899;
+    --green:   #34D399;
+    --orange:  #FB923C;
+    --dim:     #5B4D7A;
+    --text:    #EDE9FE;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+  }
+  /* ── stars bg ─────────────────────────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      radial-gradient(ellipse at 20% 30%, rgba(168,85,247,.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 70%, rgba(109,40,217,.06) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  #app { position: relative; z-index: 1; height: 100%; overflow-y: auto; overflow-x: hidden; }
+  .screen { display: none; padding: 20px 16px 40px; min-height: 100%; }
+  .screen.active { display: block; }
+
+  /* ── typography ───────────────────────────────────────────────── */
+  .mono { font-family: 'Space Mono', monospace; }
+  h1 { font-size: 2.2rem; font-weight: 800; color: var(--accent); letter-spacing: -.5px; }
+  h2 { font-size: 1.4rem; font-weight: 700; }
+  .dim { color: var(--dim); }
+  .accent { color: var(--accent); }
+  .glow-text { color: var(--glow); }
+  .green-text { color: var(--green); }
+  .red-text   { color: var(--redB); }
+  .orange-text { color: var(--orange); }
+
+  /* ── card ─────────────────────────────────────────────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+  .card.active-border { border-color: var(--bordeA); }
+  .card2 {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+
+  /* ── buttons ──────────────────────────────────────────────────── */
+  .btn {
+    display: block; width: 100%; padding: 11px 18px;
+    border: 1px solid var(--accent); border-radius: 10px;
+    background: var(--card2); color: var(--accent);
+    font: 700 13px/1 'Syne', sans-serif; cursor: pointer;
+    transition: background .15s, transform .08s;
+    text-align: center;
+  }
+  .btn:hover { background: #1E1035; }
+  .btn:active { transform: scale(.98); }
+  .btn.solid { background: #4C1D95; border-color: transparent; color: var(--text); }
+  .btn.solid:hover { background: #5B21B6; }
+  .btn.dim-btn { border-color: var(--dim); color: var(--dim); }
+  .btn.red-btn { border-color: var(--redB); color: var(--redB); }
+  .btn-row { display: flex; gap: 8px; }
+  .btn-row .btn { flex: 1; }
+
+  /* ── input ────────────────────────────────────────────────────── */
+  input[type=text], textarea, select {
+    width: 100%; padding: 10px 14px;
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text);
+    font: 13px 'Syne', sans-serif; outline: none;
+    transition: border-color .15s;
+  }
+  input[type=text]:focus, textarea:focus { border-color: var(--bordeA); }
+  input[type=text]::placeholder, textarea::placeholder { color: var(--dim); }
+  select { appearance: none; cursor: pointer; }
+  select option { background: var(--card); }
+  textarea { resize: none; height: 90px; font-size: 11px; }
+
+  /* ── range slider ─────────────────────────────────────────────── */
+  input[type=range] {
+    -webkit-appearance: none; width: 100%; height: 4px;
+    background: var(--border); border-radius: 2px; outline: none; cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 16px; height: 16px;
+    background: var(--glow); border-radius: 50%; cursor: pointer;
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  /* ── layout helpers ───────────────────────────────────────────── */
+  .center { max-width: 480px; margin: 0 auto; }
+  .row { display: flex; align-items: center; gap: 10px; }
+  .row.between { justify-content: space-between; }
+  .mb4 { margin-bottom: 4px; }
+  .mb8 { margin-bottom: 8px; }
+  .mb12 { margin-bottom: 12px; }
+  .mb16 { margin-bottom: 16px; }
+  .mb24 { margin-bottom: 24px; }
+  .mt8 { margin-top: 8px; }
+  .mt12 { margin-top: 12px; }
+  .gap6 { gap: 6px; }
+  .small { font-size: 11px; }
+  .bold { font-weight: 700; }
+  .label { font-size: 12px; color: var(--dim); margin-bottom: 6px; }
+  .divider { height: 1px; background: var(--border); margin: 10px 0; }
+
+  /* ── game layout ──────────────────────────────────────────────── */
+  .game-layout { display: flex; gap: 10px; height: calc(100vh - 40px); }
+  .game-left { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .game-right {
+    width: 210px; flex-shrink: 0;
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px 8px; display: flex; flex-direction: column; gap: 6px; overflow-y: auto;
+  }
+  .chain-box {
+    flex: 1; background: var(--card2); border-radius: 8px; padding: 10px;
+    overflow-y: auto; font-size: 12px; color: var(--text);
+    word-break: break-word; line-height: 1.7;
+    min-height: 0;
+  }
+  .chain-word { color: var(--glow); }
+  .chain-arrow { color: var(--dim); }
+
+  /* ── header badges ────────────────────────────────────────────── */
+  .badges { display: flex; gap: 8px; }
+  .badge {
+    background: var(--card2); border: 1px solid var(--bordeA); border-radius: 10px;
+    padding: 6px 12px; text-align: center; min-width: 60px;
+  }
+  .badge.red-badge { border-color: #7C2D2D; }
+  .badge .badge-label { font-size: 9px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+  .badge .badge-val { font-size: 22px; font-weight: 700; color: var(--accent); font-family: 'Space Mono', monospace; line-height: 1.1; }
+  .badge.red-badge .badge-val { color: var(--red); }
+  .badge.red-badge .badge-label { color: var(--red); }
+
+  /* ── score cards ──────────────────────────────────────────────── */
+  .score-card {
+    background: var(--card2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 6px 10px; display: flex; justify-content: space-between; align-items: center;
+    transition: border-color .2s, background .2s;
+    font-size: 11px;
+  }
+  .score-card.active { border-color: var(--accent); }
+  .score-card.out { border-color: #3D0000; opacity: .6; }
+  .score-card .pts { font-weight: 700; font-family: 'Space Mono', monospace; }
+
+  /* ── notepad in game ──────────────────────────────────────────── */
+  .notepad-box {
+    background: var(--card2); border-radius: 6px; padding: 6px 8px;
+    font-size: 10px; min-height: 55px; max-height: 70px; overflow-y: auto; color: var(--text);
+  }
+  .cmd-list { font-size: 10px; color: var(--accent); line-height: 1.8; font-family: 'Space Mono', monospace; }
+
+  /* ── msg bar ─────────────────────────────────────────────────── */
+  .msg-bar {
+    font-size: 11px; padding: 6px 14px 10px; min-height: 24px;
+    transition: color .2s;
+  }
+
+  /* ── end screen ──────────────────────────────────────────────── */
+  .trophy { font-size: 48px; text-align: center; margin-bottom: 6px; }
+  .final-score-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 14px; background: var(--card2); border-radius: 8px; margin-bottom: 4px;
+    font-size: 12px;
+  }
+
+  /* ── network ─────────────────────────────────────────────────── */
+  .ip-box {
+    background: var(--card2); border-radius: 10px; padding: 14px 16px; text-align: center;
+    font-size: 22px; font-weight: 700; color: var(--glow); font-family: 'Space Mono', monospace;
+    letter-spacing: 2px; margin-bottom: 6px;
+  }
+  .sdp-area { font-family: 'Space Mono', monospace; font-size: 10px; }
+  .peer-status {
+    padding: 8px 12px; border-radius: 8px; background: var(--card2);
+    border: 1px solid var(--bordeA); font-size: 12px; text-align: center;
+    color: var(--accent);
+  }
+
+  /* ── scrollbar ─────────────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* ── waiting dots ─────────────────────────────────────────────── */
+  @keyframes pulse { 0%,100%{opacity:.3} 50%{opacity:1} }
+  .dot1{animation:pulse 1.2s .0s infinite}
+  .dot2{animation:pulse 1.2s .4s infinite}
+  .dot3{animation:pulse 1.2s .8s infinite}
+
+  /* ── glow pulse on active turn ────────────────────────────────── */
+  @keyframes borderGlow {
+    0%,100%{box-shadow:0 0 6px rgba(168,85,247,.3)}
+    50%{box-shadow:0 0 18px rgba(168,85,247,.7)}
+  }
+  .glow-pulse { animation: borderGlow 2s ease-in-out infinite; }
+
+  /* ── timer red flash ──────────────────────────────────────────── */
+  @keyframes timerFlash { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .flash { animation: timerFlash .5s ease-in-out infinite; }
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ══════════════════ LOBBY ══════════════════ -->
+<div id="s-lobby" class="screen active">
+  <div class="center">
+    <div style="text-align:center;padding:32px 0 24px">
+      <h1>✦ SHIRITORI ✦</h1>
+      <p class="dim small mt8">chain words · survive · dominate</p>
+    </div>
+
+    <div class="card">
+      <div class="row between mb8">
+        <span class="bold">Local Play</span>
+        <span class="dim small">same device</span>
+      </div>
+      <p class="dim small mb12">All players share this device, passing it each turn.</p>
+      <button class="btn solid" onclick="showScreen('s-local-setup')">Play Local</button>
+    </div>
+
+    <div class="card">
+      <div class="row between mb8">
+        <span class="bold">Bot Mode</span>
+        <span class="dim small">vs AI</span>
+      </div>
+      <p class="dim small mb12">Play against a bot with adjustable difficulty.</p>
+      <button class="btn solid" onclick="showScreen('s-bot-setup')">Play vs Bot</button>
+    </div>
+
+    <div class="card">
+      <div class="row between mb8">
+        <span class="bold">Network Play</span>
+        <span class="dim small">P2P via WebRTC</span>
+      </div>
+      <p class="dim small mb12">Connect two browsers peer-to-peer.  ONLY WORKS BETWEEN BROWSER USERS ON SAME WIFI!!</p>
+      <div class="btn-row">
+        <button class="btn solid" onclick="showScreen('s-net-host')">Host</button>
+        <button class="btn" onclick="showScreen('s-net-join')">Join</button>
+      </div>
+    </div>
+
+    <p class="dim small" style="text-align:center;margin-top:16px">dictionary: 370 000+ English words loaded in-browser</p>
+  </div>
+</div>
+
+<!-- ══════════════════ LOCAL SETUP ══════════════════ -->
+<div id="s-local-setup" class="screen">
+  <div class="center">
+    <h2 class="mb24 mt8">Local Game</h2>
+    <div class="card mb16">
+      <div class="label">Number of players</div>
+      <div class="row" style="gap:12px">
+        <input type="range" id="local-p-slider" min="2" max="8" value="2" oninput="document.getElementById('local-p-val').textContent=this.value+' players'">
+        <span id="local-p-val" class="bold glow-text" style="white-space:nowrap;min-width:72px">2 players</span>
+      </div>
+    </div>
+    <button class="btn solid mb8" onclick="startLocalGame()">Start Game</button>
+    <button class="btn dim-btn" onclick="showScreen('s-lobby')">← Back</button>
+  </div>
+</div>
+
+<!-- ══════════════════ BOT SETUP ══════════════════ -->
+<div id="s-bot-setup" class="screen">
+  <div class="center">
+    <h2 class="mb24 mt8">Bot Mode</h2>
+    <div class="card mb10">
+      <div class="label">Human players</div>
+      <div class="row" style="gap:12px">
+        <input type="range" id="bot-p-slider" min="1" max="7" value="1" oninput="document.getElementById('bot-p-val').textContent=this.value+' player'+(+this.value>1?'s':'')">
+        <span id="bot-p-val" class="bold glow-text" style="white-space:nowrap;min-width:72px">1 player</span>
+      </div>
+      <p class="dim small mt8">The bot is always included as an extra player.</p>
+    </div>
+    <div class="card active-border mb16">
+      <div class="row between mb8">
+        <span class="bold small">Bot starting difficulty</span>
+        <span id="bot-diff-lobby-val" class="bold glow-text mono">50</span>
+      </div>
+      <input type="range" id="bot-diff-lobby" min="1" max="100" value="50"
+             oninput="document.getElementById('bot-diff-lobby-val').textContent=this.value">
+      <div class="row" style="justify-content:space-between;margin-top:8px">
+        <span class="small green-text">1 Easy</span>
+        <span class="small orange-text">50 Medium</span>
+        <span class="small red-text">100 Expert</span>
+      </div>
+    </div>
+    <button class="btn solid mb8" onclick="startBotGame()">Start Game</button>
+    <button class="btn dim-btn" onclick="showScreen('s-lobby')">← Back</button>
+  </div>
+</div>
+
+<!-- ══════════════════ NET HOST ══════════════════ -->
+<div id="s-net-host" class="screen">
+  <div class="center">
+    <h2 class="mb16 mt8">Host a Game</h2>
+    <div class="card mb10" id="net-host-step1">
+      <p class="dim small mb12">This creates a peer-to-peer connection. You'll exchange a short code with the other player.</p>
+      <button class="btn solid" onclick="netHostCreate()">Create Session</button>
+    </div>
+    <div class="card" id="net-host-step2" style="display:none">
+      <div class="label">Your offer code — copy and send to joiner</div>
+      <textarea class="sdp-area mb8" id="host-offer-out" readonly></textarea>
+      <button class="btn mb10" onclick="copyText('host-offer-out')">📋 Copy Code</button>
+      <div class="divider"></div>
+      <div class="label">Paste joiner's answer code here</div>
+      <textarea class="sdp-area mb8" id="host-answer-in" placeholder="Paste answer code…"></textarea>
+      <button class="btn solid" onclick="netHostFinish()">Connect →</button>
+    </div>
+    <div id="net-host-status" class="peer-status" style="display:none;margin-top:10px">
+      Waiting for connection<span class="dot1"> .</span><span class="dot2">.</span><span class="dot3">.</span>
+    </div>
+    <button class="btn dim-btn mt12" onclick="netReset();showScreen('s-lobby')">← Back</button>
+  </div>
+</div>
+
+<!-- ══════════════════ NET JOIN ══════════════════ -->
+<div id="s-net-join" class="screen">
+  <div class="center">
+    <h2 class="mb16 mt8">Join a Game</h2>
+    <div class="card mb10">
+      <div class="label">Paste host's offer code here</div>
+      <textarea class="sdp-area mb8" id="join-offer-in" placeholder="Paste offer code…"></textarea>
+      <button class="btn solid mb10" onclick="netJoinAnswer()">Generate Answer →</button>
+      <div id="join-answer-block" style="display:none">
+        <div class="divider"></div>
+        <div class="label">Your answer code — copy and send to host</div>
+        <textarea class="sdp-area mb8" id="join-answer-out" readonly></textarea>
+        <button class="btn" onclick="copyText('join-answer-out')">📋 Copy Code</button>
+      </div>
+    </div>
+    <div id="net-join-status" class="peer-status" style="display:none;margin-top:10px">
+      Waiting for connection<span class="dot1"> .</span><span class="dot2">.</span><span class="dot3">.</span>
+    </div>
+    <button class="btn dim-btn mt12" onclick="netReset();showScreen('s-lobby')">← Back</button>
+  </div>
+</div>
+
+<!-- ══════════════════ GAME SCREEN ══════════════════ -->
+<div id="s-game" class="screen" style="padding:12px">
+  <div class="game-layout">
+    <!-- LEFT COLUMN -->
+    <div class="game-left">
+      <!-- header card -->
+      <div class="card" style="margin-bottom:0;padding:14px 16px">
+        <div class="row between" style="align-items:flex-start">
+          <div style="flex:1;min-width:0">
+            <div id="g-turn-lbl" class="small dim mb4">—</div>
+            <div id="g-player-lbl" class="small accent mb4" style="display:none"></div>
+            <div id="g-word-lbl" class="mono" style="font-size:28px;font-weight:700;color:var(--glow);overflow:hidden;text-overflow:ellipsis">apple</div>
+          </div>
+          <div class="badges" style="margin-left:12px;flex-shrink:0">
+            <div class="badge"><div class="badge-label">time</div><div id="g-timer" class="badge-val">30</div></div>
+            <div class="badge red-badge"><div class="badge-label">forbidden</div><div id="g-forbidden" class="badge-val">?</div></div>
+          </div>
+        </div>
+        <div id="g-hint" class="small dim" style="margin-top:8px">—</div>
+      </div>
+      <!-- input card -->
+      <div class="card" style="margin-bottom:0;padding:12px 14px">
+        <input type="text" id="g-input" placeholder="Type your word and press Enter…" onkeydown="if(event.key==='Enter')gameSubmit()">
+        <div id="g-msg" class="msg-bar dim">—</div>
+        <button class="btn solid" id="g-play-btn" onclick="gameSubmit()">Play Word</button>
+      </div>
+      <!-- chain -->
+      <div class="card" style="margin-bottom:0;flex:1;display:flex;flex-direction:column;min-height:0;padding:10px 14px">
+        <div class="row between mb4">
+          <span class="small dim">Word chain</span>
+          <span id="g-chain-cnt" class="bold accent mono small">1</span>
+        </div>
+        <div id="g-chain-box" class="chain-box"></div>
+      </div>
+    </div>
+    <!-- RIGHT PANEL -->
+    <div class="game-right">
+      <div class="bold glow-text" style="font-size:13px;padding:4px 4px 2px">Scores</div>
+      <div id="g-scores"></div>
+      <div class="divider"></div>
+      <!-- bot diff (shown only in bot mode) -->
+      <div id="g-bot-diff-panel" style="display:none">
+        <div class="row between mb4">
+          <span class="small glow-text bold">🤖 Difficulty</span>
+          <span id="g-diff-badge" class="small bold mono glow-text">50</span>
+        </div>
+        <input type="range" id="g-diff-slider" min="1" max="100" value="50" style="margin-bottom:4px"
+               oninput="botDiffChange(+this.value)">
+        <div id="g-diff-desc" class="small dim" style="font-size:10px;margin-bottom:4px"></div>
+        <div id="g-bot-word" class="small glow-text" style="font-size:10px;margin-bottom:4px"></div>
+        <div class="divider"></div>
+      </div>
+      <!-- notepad -->
+      <div class="row between mb4">
+        <span class="small bold">Notepad</span>
+        <span class="dim small">plan ahead</span>
+      </div>
+      <div id="g-notepad-box" class="notepad-box"></div>
+      <input type="text" id="g-notepad-input" placeholder="word → Enter" style="padding:6px 10px;font-size:11px;margin-top:4px"
+             onkeydown="if(event.key==='Enter')notepadSave()">
+      <div id="g-notepad-msg" class="small" style="font-size:10px;min-height:14px"></div>
+      <div class="divider"></div>
+      <div class="small dim bold mb4">Commands</div>
+      <div class="cmd-list">/skip<br>/donate &lt;pts&gt; &lt;p&gt;<br>/wordlist<br>/help</div>
+      <div class="divider"></div>
+      <button class="btn dim-btn" style="font-size:10px;padding:6px" onclick="showScreen('s-lobby');gameReset()">✕ Quit</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ END SCREEN ══════════════════ -->
+<div id="s-end" class="screen">
+  <div class="center">
+    <div class="trophy" id="end-trophy">✦</div>
+    <h2 style="text-align:center;margin-bottom:6px" id="end-title">Game Over</h2>
+    <p id="end-subtitle" style="text-align:center;font-size:15px;font-weight:700;margin-bottom:18px;color:var(--glow)"></p>
+    <div class="card mb16" id="end-scores"></div>
+    <button class="btn solid mb8" onclick="showScreen('s-lobby');gameReset()">← Back to Lobby</button>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  DICTIONARY  — fetch from CDN (Merriam-Webster free list)
+// ══════════════════════════════════════════════════════════
+let dictionary = new Set();
+let dictReady = false;
+
+(async () => {
+  try {
+    const r = await fetch('https://raw.githubusercontent.com/dwyl/english-words/master/words_dictionary.json');
+    const j = await r.json();
+    dictionary = new Set(Object.keys(j));
+    dictReady = true;
+    console.log('Dictionary loaded:', dictionary.size, 'words');
+  } catch(e) {
+    console.warn('Dictionary load failed, running without validation', e);
+    dictReady = false;
+  }
+})();
+
+function isValidWord(w) {
+  if (!dictReady || dictionary.size === 0) return true; // no dict = permissive
+  return dictionary.has(w);
+}
+
+// Words by first letter for bot
+const wordsByLetter = {};
+function buildWordIndex() {
+  for (const w of dictionary) {
+    if (w.length < 2) continue;
+    const c = w[0];
+    if (!wordsByLetter[c]) wordsByLetter[c] = [];
+    wordsByLetter[c].push(w);
+  }
+}
+// Build index after dict loads
+const origFetch = window.fetch;
+setTimeout(() => { if(dictReady) buildWordIndex(); else setTimeout(() => buildWordIndex(), 3000); }, 2500);
+
+function botPickWord(startChar, usedSet, forbidden, difficulty) {
+  const pool = wordsByLetter[startChar] || [];
+  const avail = pool.filter(w => !usedSet.has(w) && w.length > 1);
+  if (!avail.length) return null;
+  const safe   = avail.filter(w => w[w.length-1] !== forbidden);
+  const danger = avail.filter(w => w[w.length-1] === forbidden);
+  // difficulty=100 → only safe; difficulty=1 → mostly danger
+  const safeN   = Math.round(safe.length   *  difficulty / 100);
+  const dangerN = Math.round(danger.length * (100 - difficulty) / 100);
+  let finalPool = [
+    ...safe.slice(0, safeN > 0 ? safeN : 1),
+    ...danger.slice(0, dangerN)
+  ];
+  if (!finalPool.length) finalPool = safe.length ? safe : danger;
+  return finalPool[Math.floor(Math.random() * finalPool.length)] || null;
+}
+
+// ══════════════════════════════════════════════════════════
+//  SCREEN ROUTER
+// ══════════════════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('app').scrollTop = 0;
+}
+
+// ══════════════════════════════════════════════════════════
+//  GAME STATE
+// ══════════════════════════════════════════════════════════
+let G = {};
+
+function gameReset() {
+  if (G.timerTick) clearTimeout(G.timerTick);
+  G = {};
+  netReset();
+}
+
+function initGame(nPlayers, botNum = -1, botDiff = 50, netMode = false, netPlayerNum = -1) {
+  if (G.timerTick) clearTimeout(G.timerTick);
+  G = {
+    nPlayers, botNum, botDiff, netMode, netPlayerNum,
+    scores: Array(nPlayers).fill(0),
+    active: Array.from({length: nPlayers}, (_, i) => i + 1),
+    wordlist: ['apple'], wset: new Set(['apple']),
+    forbidden: randomLetter(),
+    current: 1, prevWord: 'apple',
+    notepad: [], notepadWords: [],
+    timerTick: null, timeLeft: 30,
+    gameActive: true
+  };
+}
+
+function randomLetter() {
+  return String.fromCharCode(97 + Math.floor(Math.random() * 26));
+}
+
+// ══════════════════════════════════════════════════════════
+//  LOCAL GAME
+// ══════════════════════════════════════════════════════════
+function startLocalGame() {
+  const n = +document.getElementById('local-p-slider').value;
+  initGame(n);
+  showScreen('s-game');
+  renderGame();
+}
+
+// ══════════════════════════════════════════════════════════
+//  BOT GAME
+// ══════════════════════════════════════════════════════════
+function startBotGame() {
+  const humans = +document.getElementById('bot-p-slider').value;
+  const diff   = +document.getElementById('bot-diff-lobby').value;
+  const n      = humans + 1; // bot is last
+  initGame(n, n, diff);
+  document.getElementById('g-bot-diff-panel').style.display = '';
+  document.getElementById('g-diff-slider').value = diff;
+  document.getElementById('g-diff-badge').textContent = diff;
+  document.getElementById('g-diff-desc').textContent = diffLabel(diff);
+  showScreen('s-game');
+  renderGame();
+  if (G.current === G.botNum) setTimeout(doBotTurn, 900);
+}
+
+function diffLabel(d) {
+  if (d <= 20) return 'easy — short common words';
+  if (d <= 40) return 'medium-easy';
+  if (d <= 60) return 'medium';
+  if (d <= 80) return 'hard — long/rare words';
+  return 'expert — maximum complexity';
+}
+
+function botDiffChange(v) {
+  G.botDiff = v;
+  document.getElementById('g-diff-badge').textContent = v;
+  document.getElementById('g-diff-desc').textContent = diffLabel(v);
+}
+
+function doBotTurn() {
+  if (!G.gameActive || G.current !== G.botNum) return;
+  const word = botPickWord(G.prevWord[G.prevWord.length-1], G.wset, G.forbidden, G.botDiff);
+  if (!word) { doSkip(G.botNum); return; }
+  const dangerPct = 100 - G.botDiff;
+  document.getElementById('g-bot-word').textContent = `Danger pool: ${dangerPct}%`;
+  if (word[word.length-1] === G.forbidden) {
+    eliminate(G.botNum, `🤖 Bot played "${word}" — ends with forbidden "${G.forbidden.toUpperCase()}"! Bot is out.`, 'redB');
+    return;
+  }
+  G.wordlist.push(word); G.wset.add(word);
+  G.scores[G.botNum - 1] += word.length;
+  G.prevWord = word;
+  setMsg(`🤖 Bot played "${word}"  (+${word.length} pts)`, 'glow');
+  G.current = nextPlayer();
+  renderGame();
+  startTimer();
+}
+
+// ══════════════════════════════════════════════════════════
+//  GAME SUBMIT
+// ══════════════════════════════════════════════════════════
+function gameSubmit() {
+  if (!G.gameActive) return;
+  // In net mode, only act if it's our turn
+  if (G.netMode && G.current !== G.netPlayerNum) return;
+  if (!G.netMode && G.current === G.botNum) return;
+
+  const inp = document.getElementById('g-input');
+  const raw = inp.value.trim().toLowerCase();
+  inp.value = '';
+  if (!raw) return;
+
+  // commands
+  if (raw === '/help') {
+    setMsg('/skip · /donate <pts> <p> · /wordlist · /help', 'accent');
+    return;
+  }
+  if (raw === '/rules') {
+    setMsg(`Chain by last letter. No repeats. Forbidden: "${G.forbidden.toUpperCase()}".`, 'accent');
+    return;
+  }
+  if (raw === '/wordlist') {
+    setMsg('Used: ' + G.wordlist.join(', '), 'accent');
+    return;
+  }
+  if (raw === '/skip') { doSkipCommand(G.current); return; }
+  if (raw.startsWith('/donate')) { doDonateCommand(G.current, raw); return; }
+
+  // validation
+  if (G.wset.has(raw)) { setMsg('Already used — pick a different word.', 'red'); return; }
+  if (!isValidWord(raw)) { setMsg(`"${raw}" is not a valid English word.`, 'red'); return; }
+  if (raw[0] !== G.prevWord[G.prevWord.length-1]) {
+    setMsg(`Word must start with "${G.prevWord[G.prevWord.length-1].toUpperCase()}".`, 'red');
+    return;
+  }
+  if (raw[raw.length-1] === G.forbidden) {
+    if (G.netMode) {
+      netSend({type:'action', word: raw});
+    } else {
+      eliminate(G.current, `Player ${G.current} is out! Word ended with forbidden "${G.forbidden.toUpperCase()}".`, 'redB');
+    }
+    return;
+  }
+
+  // valid word
+  if (G.netMode) {
+    netSend({type:'action', word: raw});
+  } else {
+    const p = G.current;
+    G.wordlist.push(raw); G.wset.add(raw);
+    G.scores[p-1] += raw.length;
+    G.prevWord = raw;
+    setMsg(`+${raw.length} pts for Player ${p}.`, 'green');
+    G.current = nextPlayer();
+    renderGame();
+    startTimer();
+    if (G.current === G.botNum) setTimeout(doBotTurn, 900);
+  }
+}
+
+function doSkipCommand(p) {
+  if (G.netMode) { netSend({type:'action', word:'/skip'}); return; }
+  doSkip(p);
+}
+
+function doSkip(p) {
+  const name = p === G.botNum ? '🤖 Bot' : `Player ${p}`;
+  const o = Math.floor(Math.random() * 3);
+  if (o === 0) {
+    G.scores[p-1] = Math.max(0, G.scores[p-1] - 10);
+    setMsg(`${name} skipped — lost 10 pts!`, 'orange');
+  } else if (o === 1) {
+    setMsg(`${name} skipped safely — no penalty.`, 'green');
+  } else {
+    eliminate(p, `${name} skipped and got eliminated!`, 'redB');
+    return;
+  }
+  G.current = nextPlayer();
+  renderGame();
+  startTimer();
+  if (G.current === G.botNum) setTimeout(doBotTurn, 900);
+}
+
+function doDonateCommand(p, raw) {
+  if (G.netMode) { netSend({type:'action', word: raw}); return; }
+  doDonate(p, raw);
+}
+
+function doDonate(p, raw) {
+  const parts = raw.split(' ');
+  if (parts.length !== 3) { setMsg('/donate <pts> <player>', 'red'); return; }
+  const amt = parseInt(parts[1]), target = parseInt(parts[2]);
+  if (isNaN(amt) || isNaN(target) || amt <= 0 || target < 1 || target > G.nPlayers || target === p) {
+    setMsg('Invalid target.', 'red'); return;
+  }
+  if (!G.active.includes(target)) {
+    const tn = target === G.botNum ? '🤖 Bot' : `Player ${target}`;
+    setMsg(`${tn} is already out.`, 'red'); return;
+  }
+  const actual = Math.min(amt, G.scores[p-1]);
+  G.scores[p-1] -= actual; G.scores[target-1] += actual;
+  const tn = target === G.botNum ? '🤖 Bot' : `Player ${target}`;
+  setMsg(`Player ${p} donated ${actual} pts to ${tn}.`, 'accent');
+  G.current = nextPlayer();
+  renderGame();
+  startTimer();
+  if (G.current === G.botNum) setTimeout(doBotTurn, 900);
+}
+
+function eliminate(p, msg, col) {
+  const next = nextPlayer();
+  G.active = G.active.filter(x => x !== p);
+  setMsg(msg, col);
+  renderGame();
+  if (G.active.length === 1) {
+    if (G.timerTick) { clearTimeout(G.timerTick); G.timerTick = null; }
+    setTimeout(() => endGame(G.active[0]), 1400);
+    return;
+  }
+  G.current = next;
+  renderGame();
+  startTimer();
+  if (G.current === G.botNum) setTimeout(doBotTurn, 900);
+}
+
+function nextPlayer() {
+  const idx = G.active.indexOf(G.current);
+  return G.active[(idx + 1) % G.active.length];
+}
+
+// ══════════════════════════════════════════════════════════
+//  TIMER
+// ══════════════════════════════════════════════════════════
+function startTimer() {
+  if (G.timerTick) clearTimeout(G.timerTick);
+  G.timeLeft = 30;
+  tick();
+}
+
+function tick() {
+  if (!G.gameActive) return;
+  const t = G.timeLeft;
+  const el = document.getElementById('g-timer');
+  if (el) {
+    el.textContent = t;
+    el.style.color = t <= 10 ? 'var(--redB)' : 'var(--accent)';
+    if (t <= 10) el.classList.add('flash'); else el.classList.remove('flash');
+  }
+  if (t <= 0) {
+    // don't auto-skip in net mode (server handles it)
+    if (!G.netMode) {
+      if (G.current !== G.botNum) doSkip(G.current);
+    }
+    return;
+  }
+  G.timeLeft--;
+  G.timerTick = setTimeout(tick, 1000);
+}
+
+// ══════════════════════════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════════════════════════
+function renderGame() {
+  const isBot = G.current === G.botNum;
+  const isNet = G.netMode;
+  const myTurn = isNet ? G.current === G.netPlayerNum : !isBot;
+
+  document.getElementById('g-word-lbl').textContent = G.prevWord;
+  document.getElementById('g-forbidden').textContent = G.forbidden.toUpperCase();
+
+  const last = G.prevWord[G.prevWord.length-1];
+  document.getElementById('g-hint').textContent = `Next word must start with "${last.toUpperCase()}"`;
+
+  const turnLbl = document.getElementById('g-turn-lbl');
+  if (isBot) turnLbl.textContent = '🤖 Bot is thinking…';
+  else if (isNet && G.current === G.netPlayerNum) turnLbl.textContent = '✦ Your turn!';
+  else if (isNet) turnLbl.textContent = `Player ${G.current}'s turn`;
+  else turnLbl.textContent = `Player ${G.current}'s turn`;
+
+  const pLbl = document.getElementById('g-player-lbl');
+  if (isNet) { pLbl.textContent = `✦ You are Player ${G.netPlayerNum}`; pLbl.style.display = ''; }
+  else pLbl.style.display = 'none';
+
+  const inp = document.getElementById('g-input');
+  const btn = document.getElementById('g-play-btn');
+  inp.disabled = !myTurn;
+  btn.disabled = !myTurn;
+  if (myTurn) setTimeout(() => inp.focus(), 50);
+
+  // chain
+  const cb = document.getElementById('g-chain-box');
+  cb.innerHTML = G.wordlist.map((w, i) =>
+    `<span class="chain-word">${w}</span>${i < G.wordlist.length - 1 ? '<span class="chain-arrow"> → </span>' : ''}`
+  ).join('');
+  cb.scrollTop = cb.scrollHeight;
+  document.getElementById('g-chain-cnt').textContent = G.wordlist.length;
+
+  // scores
+  const sc = document.getElementById('g-scores');
+  sc.innerHTML = '';
+  for (let i = 1; i <= G.nPlayers; i++) {
+    const out    = !G.active.includes(i);
+    const active = i === G.current && !out;
+    const isB    = i === G.botNum;
+    const you    = isNet && i === G.netPlayerNum ? ' (you)' : '';
+    const name   = isB ? '🤖 Bot' : `Player ${i}${you}`;
+    const div    = document.createElement('div');
+    div.className = 'score-card' + (active ? ' active' : '') + (out ? ' out' : '');
+    if (active) div.classList.add('glow-pulse');
+    const nameColor = out ? 'var(--dim)' : active ? 'var(--text)' : isB ? 'var(--glow)' : 'var(--dim)';
+    const ptsColor  = out ? 'var(--redB)' : active ? 'var(--glow)' : isB ? 'var(--glow)' : 'var(--dim)';
+    div.innerHTML = `<span style="color:${nameColor}">${name}${out ? ' · out' : ''}</span><span class="pts" style="color:${ptsColor}">${G.scores[i-1]}</span>`;
+    sc.appendChild(div);
+  }
+}
+
+function setMsg(text, col) {
+  const el = document.getElementById('g-msg');
+  if (!el) return;
+  el.textContent = text;
+  const colorMap = {
+    red: 'var(--redB)', green: 'var(--green)', orange: 'var(--orange)',
+    accent: 'var(--accent)', glow: 'var(--glow)', dim: 'var(--dim)', redB: 'var(--redB)'
+  };
+  el.style.color = colorMap[col] || col || 'var(--dim)';
+}
+
+// ══════════════════════════════════════════════════════════
+//  NOTEPAD
+// ══════════════════════════════════════════════════════════
+function notepadSave() {
+  const inp = document.getElementById('g-notepad-input');
+  const raw = inp.value.trim().toLowerCase();
+  inp.value = '';
+  if (!raw) return;
+  if (dictReady && !isValidWord(raw)) {
+    const m = document.getElementById('g-notepad-msg');
+    m.textContent = `"${raw}" — not a word`; m.style.color = 'var(--redB)';
+    setTimeout(() => m.textContent = '', 1500);
+    return;
+  }
+  G.notepadWords.push(raw);
+  document.getElementById('g-notepad-box').textContent = G.notepadWords.join(', ');
+  const m = document.getElementById('g-notepad-msg');
+  m.textContent = `"${raw}" saved ✓`; m.style.color = 'var(--green)';
+  setTimeout(() => m.textContent = '', 1200);
+}
+
+// ══════════════════════════════════════════════════════════
+//  END GAME
+// ══════════════════════════════════════════════════════════
+function endGame(winner) {
+  G.gameActive = false;
+  if (G.timerTick) { clearTimeout(G.timerTick); G.timerTick = null; }
+  const isBot = winner === G.botNum;
+  const isNet = G.netMode;
+  const isMe  = isNet && winner === G.netPlayerNum;
+
+  document.getElementById('end-trophy').textContent = isBot ? '🤖' : '✦';
+  document.getElementById('end-title').textContent = 'Game Over';
+  let sub = '';
+  if (isBot) sub = '🤖 Bot wins!';
+  else if (isNet) sub = `Player ${winner} wins!` + (isMe ? ' — that\'s you! 🎉' : '');
+  else sub = `Player ${winner} wins!`;
+  const subEl = document.getElementById('end-subtitle');
+  subEl.textContent = sub;
+  subEl.style.color = (isBot || isMe) ? 'var(--glow)' : 'var(--redB)';
+
+  const sc = document.getElementById('end-scores');
+  const sorted = [...Array(G.nPlayers).keys()].map(i=>i+1)
+    .sort((a,b) => G.scores[b-1] - G.scores[a-1]);
+
+  sc.innerHTML = `<div class="label" style="margin-bottom:8px">Final Scores</div>`;
+  for (const i of sorted) {
+    const out = !G.active.includes(i) || (G.active.length === 1 && G.active[0] !== i);
+    const isW = i === winner; const isB = i === G.botNum;
+    const you = isNet && i === G.netPlayerNum ? ' (you)' : '';
+    const name = isB ? `🤖 Bot${you}` : `Player ${i}${you}`;
+    const col = isW ? 'var(--glow)' : (out ? 'var(--redB)' : 'var(--dim)');
+    sc.innerHTML += `<div class="final-score-row"><span style="color:${col};font-weight:${isW?700:400}">${name}${out && !isW?' · out':''}${isW?' 🏆':''}</span><span style="color:${col};font-family:'Space Mono',monospace">${G.scores[i-1]} pts</span></div>`;
+  }
+  sc.innerHTML += `<div class="small dim" style="padding:8px 14px">Words played: ${G.wordlist.length}</div>`;
+  if (G.botNum > 0) sc.innerHTML += `<div class="small dim" style="padding:0 14px 8px">Final bot difficulty: ${G.botDiff}/100</div>`;
+
+  showScreen('s-end');
+}
+
+// ══════════════════════════════════════════════════════════
+//  WEBRTC NETWORK
+// ══════════════════════════════════════════════════════════
+let pc = null;
+let dc = null;
+let netRole = null; // 'host' or 'join'
+
+const RTC_CONFIG = {
+  iceServers: [
+    {urls: 'stun:stun.l.google.com:19302'},
+    {urls: 'stun:stun1.l.google.com:19302'},
+  ]
+};
+
+function netReset() {
+  if (dc) { try { dc.close(); } catch(e){} dc = null; }
+  if (pc) { try { pc.close(); } catch(e){} pc = null; }
+  netRole = null;
+}
+
+// --- HOST ---
+async function netHostCreate() {
+  netReset();
+  netRole = 'host';
+  pc = new RTCPeerConnection(RTC_CONFIG);
+  dc = pc.createDataChannel('game', {ordered: true});
+  setupDataChannel(dc, true);
+
+  const offerCandidates = [];
+  pc.onicecandidate = e => {
+    if (e.candidate) offerCandidates.push(e.candidate);
+  };
+  pc.onicegatheringstatechange = () => {
+    if (pc.iceGatheringState === 'complete') {
+      const payload = JSON.stringify({sdp: pc.localDescription, candidates: offerCandidates});
+      const encoded = btoa(payload);
+      document.getElementById('host-offer-out').value = encoded;
+      document.getElementById('net-host-step2').style.display = '';
+      document.getElementById('net-host-step1').style.display = 'none';
+    }
+  };
+
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+}
+
+async function netHostFinish() {
+  const raw = document.getElementById('host-answer-in').value.trim();
+  if (!raw) { alert('Paste the answer code first.'); return; }
+  try {
+    const decoded = JSON.parse(atob(raw));
+    await pc.setRemoteDescription(new RTCSessionDescription(decoded.sdp));
+    for (const c of decoded.candidates) {
+      try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch(e){}
+    }
+    document.getElementById('net-host-status').style.display = '';
+  } catch(e) {
+    alert('Invalid code: ' + e.message);
+  }
+}
+
+// --- JOIN ---
+async function netJoinAnswer() {
+  netReset();
+  netRole = 'join';
+  const raw = document.getElementById('join-offer-in').value.trim();
+  if (!raw) { alert('Paste the offer code first.'); return; }
+  try {
+    const decoded = JSON.parse(atob(raw));
+    pc = new RTCPeerConnection(RTC_CONFIG);
+    pc.ondatachannel = e => { dc = e.channel; setupDataChannel(dc, false); };
+
+    const answerCandidates = [];
+    pc.onicecandidate = e => {
+      if (e.candidate) answerCandidates.push(e.candidate);
+    };
+    pc.onicegatheringstatechange = () => {
+      if (pc.iceGatheringState === 'complete') {
+        const payload = JSON.stringify({sdp: pc.localDescription, candidates: answerCandidates});
+        const encoded = btoa(payload);
+        document.getElementById('join-answer-out').value = encoded;
+        document.getElementById('join-answer-block').style.display = '';
+        document.getElementById('net-join-status').style.display = '';
+      }
+    };
+
+    await pc.setRemoteDescription(new RTCSessionDescription(decoded.sdp));
+    for (const c of decoded.candidates) {
+      try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch(e){}
+    }
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+  } catch(e) {
+    alert('Invalid code: ' + e.message);
+  }
+}
+
+function setupDataChannel(channel, isHost) {
+  channel.onopen = () => {
+    console.log('DataChannel open, isHost:', isHost);
+    if (isHost) {
+      // Host is player 1, join is player 2; host starts game
+      const state = {
+        type: 'game_start',
+        nPlayers: 2,
+        playerNum: 2, // joiner's number
+        scores: [0, 0],
+        active: [1, 2],
+        wordlist: ['apple'],
+        forbidden: randomLetter(),
+        current: 1,
+        prevWord: 'apple'
+      };
+      netSend(state);
+      // Init host state (player 1)
+      initGame(2, -1, 50, true, 1);
+      G.forbidden = state.forbidden;
+      document.getElementById('g-bot-diff-panel').style.display = 'none';
+      showScreen('s-game');
+      renderGame();
+      startTimer();
+    }
+  };
+
+  channel.onmessage = e => {
+    try {
+      const msg = JSON.parse(e.data);
+      handleNetMsg(msg, isHost);
+    } catch(ex) { console.error('dc parse error', ex); }
+  };
+
+  channel.onclose = () => {
+    if (G.gameActive) {
+      G.gameActive = false;
+      alert('Connection lost!');
+      showScreen('s-lobby');
+    }
+  };
+}
+
+function netSend(obj) {
+  if (dc && dc.readyState === 'open') {
+    dc.send(JSON.stringify(obj));
+  }
+}
+
+// net message handling
+function handleNetMsg(msg, iAmHost) {
+  if (msg.type === 'game_start') {
+    // Received by joiner
+    initGame(msg.nPlayers, -1, 50, true, msg.playerNum);
+    G.forbidden = msg.forbidden;
+    G.wordlist = msg.wordlist; G.wset = new Set(msg.wordlist);
+    G.scores = msg.scores; G.active = msg.active;
+    G.prevWord = msg.prevWord; G.current = msg.current;
+    document.getElementById('g-bot-diff-panel').style.display = 'none';
+    showScreen('s-game');
+    renderGame();
+    startTimer();
+    return;
+  }
+
+  if (msg.type === 'action') {
+    // Received by the OTHER player — process and broadcast state
+    const word = msg.word;
+    const sender = iAmHost ? 2 : 1; // who sent this
+
+    if (word === '/skip') {
+      netDoSkip(sender);
+    } else if (word.startsWith('/donate')) {
+      netDoDonate(sender, word);
+    } else {
+      netProcessWord(sender, word);
+    }
+    return;
+  }
+
+  if (msg.type === 'state') {
+    // Sync state
+    G.scores    = msg.scores;
+    G.active    = msg.active;
+    G.wordlist  = msg.wordlist; G.wset = new Set(msg.wordlist);
+    G.prevWord  = msg.prevWord;
+    G.current   = msg.current;
+    G.forbidden = msg.forbidden;
+    renderGame();
+    startTimer();
+    if (msg.msg) setMsg(msg.msg, msg.col || 'accent');
+    if (msg.gameOver) { endGame(msg.winner); }
+    return;
+  }
+
+  if (msg.type === 'msg') {
+    setMsg(msg.text, msg.col);
+    return;
+  }
+}
+
+function netProcessWord(sender, word) {
+  // sender is opponent (we received their action)
+  if (G.wset.has(word)) {
+    netSend({type:'msg', text:'Already used — pick a different word.', col:'red'}); return;
+  }
+  if (word[0] !== G.prevWord[G.prevWord.length-1]) {
+    netSend({type:'msg', text:`Word must start with "${G.prevWord[G.prevWord.length-1]}".`, col:'red'}); return;
+  }
+  if (word[word.length-1] === G.forbidden) {
+    G.active = G.active.filter(x => x !== sender);
+    const stateMsg = G.active.length === 1
+      ? null
+      : `Player ${sender} is out! Word ended with forbidden "${G.forbidden.toUpperCase()}".`;
+    syncState(stateMsg, 'redB');
+    if (G.active.length === 1) { netBroadcastEnd(G.active[0], `Player ${sender} is out!`); }
+    return;
+  }
+  G.wordlist.push(word); G.wset.add(word);
+  G.scores[sender-1] += word.length;
+  G.prevWord = word;
+  G.current = nextPlayer();
+  syncState(`Player ${sender}: "${word}"  +${word.length} pts`, 'green');
+}
+
+function netDoSkip(p) {
+  const o = Math.floor(Math.random() * 3);
+  if (o === 0) {
+    G.scores[p-1] = Math.max(0, G.scores[p-1]-10);
+    G.current = nextPlayer();
+    syncState(`Player ${p} skipped — lost 10 pts.`, 'orange');
+  } else if (o === 1) {
+    G.current = nextPlayer();
+    syncState(`Player ${p} skipped safely.`, 'green');
+  } else {
+    G.active = G.active.filter(x => x !== p);
+    if (G.active.length === 1) { netBroadcastEnd(G.active[0], `Player ${p} skipped and got eliminated!`); }
+    else { G.current = nextPlayer(); syncState(`Player ${p} skipped and got eliminated!`, 'redB'); }
+  }
+}
+
+function netDoDonate(p, raw) {
+  const parts = raw.split(' ');
+  if (parts.length !== 3) { netSend({type:'msg',text:'/donate <pts> <player>',col:'red'}); return; }
+  const amt = parseInt(parts[1]), target = parseInt(parts[2]);
+  if (isNaN(amt)||isNaN(target)||amt<=0||target<1||target>G.nPlayers||target===p) {
+    netSend({type:'msg',text:'Invalid target.',col:'red'}); return;
+  }
+  const actual = Math.min(amt, G.scores[p-1]);
+  G.scores[p-1] -= actual; G.scores[target-1] += actual;
+  G.current = nextPlayer();
+  syncState(`Player ${p} donated ${actual} pts to Player ${target}.`, 'accent');
+}
+
+function syncState(msg, col) {
+  const state = {
+    type: 'state',
+    scores: G.scores, active: G.active, wordlist: G.wordlist,
+    prevWord: G.prevWord, current: G.current, forbidden: G.forbidden,
+    msg, col
+  };
+  // Send to peer
+  netSend(state);
+  // Apply locally
+  G.wset = new Set(G.wordlist);
+  renderGame();
+  startTimer();
+  if (msg) setMsg(msg, col);
+}
+
+function netBroadcastEnd(winner, msg) {
+  const state = {
+    type: 'state', gameOver: true, winner,
+    scores: G.scores, active: G.active, wordlist: G.wordlist,
+    prevWord: G.prevWord, current: G.current, forbidden: G.forbidden,
+    msg, col: 'redB'
+  };
+  netSend(state);
+  G.wset = new Set(G.wordlist);
+  if (msg) setMsg(msg, 'redB');
+  endGame(winner);
+}
+
+// ══════════════════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════════════════
+function copyText(id) {
+  const el = document.getElementById(id);
+  el.select();
+  try { document.execCommand('copy'); }
+  catch(e) { navigator.clipboard.writeText(el.value).catch(()=>{}); }
+  // Brief feedback
+  const orig = el.nextElementSibling?.textContent;
+}
+</script>
+</body>
+</html>
